@@ -38,12 +38,12 @@ export const AuthForm = ({ children, title, subtitle }) => {
               </a>
             </p>
           ) : (
-            <p>
-              Already have an account?{' '}
-              <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Sign in
-              </a>
-            </p>
+            <p className="custom-text-forswitcj">
+  Already have an account?{' '}
+  <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+    Sign in
+  </a>
+</p>
           )}
         </div>
       </motion.div>
