@@ -1,17 +1,18 @@
-import { useAuth } from '../context/AuthContext.jsx';
+// pages/ReaderDashboard.jsx
+import { useAuth } from '../context/AuthContext';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const HomePage = () => {
+const ReaderDashboard = () => {
   const { user, logout } = useAuth();
-  const [stats, setStats] = useState({ users: 0, posts: 0, comments: 0 });
+  const [stats, setStats] = useState({ likedPosts: 0, comments: 0, bookmarks: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const { data } = await axios.get(
-          'https://mern-blog-back-8z6z.onrender.com/api/dashboard/stats',
+          `https://mern-blog-back-8z6z.onrender.com/api/readers/${user.id}/stats`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -26,20 +27,25 @@ const HomePage = () => {
       }
     };
 
-    fetchStats();
-  }, []);
+    if (user?.id) {
+      fetchStats();
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Welcome, {user?.name}</h1>
-          <button
-            onClick={logout}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-          >
-            Logout
-          </button>
+          <h1 className="text-3xl font-bold text-gray-900">Reader Dashboard</h1>
+          <div className="flex items-center space-x-4">
+            <span className="text-gray-700">Welcome, {user?.name}</span>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 
@@ -50,9 +56,9 @@ const HomePage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <DashboardCard title="Users" value={stats.users} />
-            <DashboardCard title="Posts" value={stats.posts} />
-            <DashboardCard title="Comments" value={stats.comments} />
+            <DashboardCard title="Liked Posts" value={stats.likedPosts} />
+            <DashboardCard title="Your Comments" value={stats.comments} />
+            <DashboardCard title="Bookmarks" value={stats.bookmarks} />
           </div>
         )}
       </main>
@@ -67,4 +73,4 @@ const DashboardCard = ({ title, value }) => (
   </div>
 );
 
-export default HomePage;
+export default ReaderDashboard;

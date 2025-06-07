@@ -1,8 +1,9 @@
 import { useAuth } from '../context/AuthContext.jsx';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const ProtectedRoute = ({ children, roles }) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -13,7 +14,18 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Check if route requires specific roles
+  if (roles && !roles.includes(user?.role)) {
+    // Redirect to appropriate dashboard based on role
+    if (user?.role === 'admin') {
+      return <Navigate to="/admin" replace />;
+    } else if (user?.role === 'author') {
+      return <Navigate to="/author" replace />;
+    }
+    return <Navigate to="/reader" replace />;
   }
 
   return children;
